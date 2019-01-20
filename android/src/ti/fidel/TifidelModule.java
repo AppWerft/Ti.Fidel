@@ -11,7 +11,7 @@ package ti.fidel;
 import java.io.IOException;
 import android.content.Intent ;
 import android.content.Context ;
-import android.content.Activity ;
+import android.app.Activity;
 
 
 import org.appcelerator.kroll.KrollModule;
@@ -41,7 +41,7 @@ import org.appcelerator.titanium.util.TiActivitySupport;
 import org.appcelerator.titanium.util.TiConvert;
 
 @Kroll.module(name = "Tifidel", id = "ti.fidel")
-public class TifidelModule extends KrollModule implements TiActivityResultHandler {
+public class TifidelModule extends KrollModule implements onActivityResult {
 	// Standard Debugging variables
 	private static final String LCAT = "TifidelModule";
 	private static final boolean DBG = TiConfig.LOGD;
@@ -128,14 +128,14 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 
 	@Kroll.method
 	public void present() {
-		Context context = TiApplication.getInstance().getApplicationContext();
-		final TiActivitySupport activitySupport = (TiActivitySupport) TiApplication
-				.getInstance().getCurrentActivity();
+		Activity currAct = TiApplication.getInstance().getRootOrCurrentActivity();
+		final TiActivitySupport activitySupport = (TiActivitySupport) currAct;
+		// this doesnt work, because we have no access to internal intent resp nee activity
 		/*activitySupport.launchActivityForResult(intent,
 				REQUEST_CODE_PAYMENT, new PaymentResultHandler());
-				*/
-		Activity act = TiApplication.getInstance().getRootOrCurrentActivity();
-		Fidel.present(act);
+		*/	
+		/* Fidel uses this interface and aspects the result in onActivityResultm*/
+		Fidel.present(currAct);
 	}
 	
 	@Override

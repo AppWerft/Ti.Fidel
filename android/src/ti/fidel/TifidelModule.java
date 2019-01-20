@@ -134,7 +134,7 @@ public class TifidelModule extends KrollModule implements onActivityResult {
 		/*activitySupport.launchActivityForResult(intent,
 				REQUEST_CODE_PAYMENT, new PaymentResultHandler());
 		*/	
-		/* Fidel uses this interface and aspects the result in onActivityResultm*/
+		/* Fidel uses this interface and aspects the result in onActivityResultm, not availble in module*/
 		Fidel.present(currAct);
 	}
 	

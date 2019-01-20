@@ -12,5 +12,7 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/jars4ide/cardio_5-5-1.jar"/>
+	<classpathentry kind="lib" path="/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/jars4ide/fidel_android.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

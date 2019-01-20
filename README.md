@@ -25,3 +25,30 @@ Fidel.init({
 });	
 Fidel.present();
 ```
+
+## Constants
+
+### Countries
+
+* Fidel.COUNTRY\_UNITED\_KINGDOM
+* Fidel.COUNTRY\_UNITED\_STATES
+* Fidel.COUNTRY\_UNITED\_STATES
+* Fidel.COUNTRY\_SWEDEN
+* Fidel.COUNTRY\_JAPAN  
+
+### Codes
+
+## Methods
+
+### init(object)
+#### keys of object (parameters of init())
+* autoScan: Boolean
+* apiKey: String
+
+
+
+### present()
+
+### startScanner()
+
+### createForm()

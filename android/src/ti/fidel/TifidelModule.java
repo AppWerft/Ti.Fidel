@@ -12,49 +12,89 @@ import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
 import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.kroll.KrollFunction;
+import org.appcelerator.kroll.KrollModule;
+import org.appcelerator.kroll.KrollDict;
+
+import org.appcelerator.kroll.annotations.Kroll;
+import org.appcelerator.kroll.common.Log;
+import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.titanium.io.TiFileFactory;
+import org.json.JSONException;
+import com.fidel.sdk.Fidel;
+
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
 
-
-@Kroll.module(name="Tifidel", id="ti.fidel")
-public class TifidelModule extends KrollModule
-{
+@Kroll.module(name = "Tifidel", id = "ti.fidel")
+public class TifidelModule extends KrollModule {
 
 	// Standard Debugging variables
 	private static final String LCAT = "TifidelModule";
 	private static final boolean DBG = TiConfig.LOGD;
 
 	// You can define constants with @Kroll.constant, for example:
-	// @Kroll.constant public static final String EXTERNAL_NAME = value;
+	@Kroll.constant
+	public static final String COUNTRY_UNITED_KINGDOM = Fidel.Country.UNITED_KINGDOM.name();
+	@Kroll.constant
+	public static final String COUNTRY_IRELAND = Fidel.Country.IRELAND.name();
+	@Kroll.constant
+	public static final String COUNTRY_JAPAN = Fidel.Country.JAPAN.name();
+	@Kroll.constant
+	public static final String COUNTRY_UNITED_STATES = Fidel.Country.UNITED_STATES.name();
+	@Kroll.constant
+	public static final String COUNTRY_SWEDEN = Fidel.Country.SWEDEN.name();
 
-	public TifidelModule()
-	{
+	@Kroll.constant
+	public static final int FIDEL_LINK_CARD_REQUEST_CODE = Fidel.FIDEL_LINK_CARD_REQUEST_CODE;
+	@Kroll.constant
+	public static final String FIDEL_LINK_CARD_RESULT_CARD = Fidel.FIDEL_LINK_CARD_RESULT_CARD;
+
+	
+private boolean autoScan;
+	
+
+	public TifidelModule() {
 		super();
 	}
 
 	@Kroll.onAppCreate
-	public static void onAppCreate(TiApplication app)
-	{
+	public static void onAppCreate(TiApplication app) {
 		Log.d(LCAT, "inside onAppCreate");
 		// put module init code that needs to run when the application is created
 	}
 
 	// Methods
 	@Kroll.method
-	public String example()
-	{
-		Log.d(LCAT, "example called");
-		return "hello world";
+	public void init(KrollDict opts) {
+		if (opts.containsKeyAndNotNull("apiKey")) {
+			Fidel.apiKey = opts.getString("apiKey");
+		}
+	}
+
+	@Kroll.method
+	public void createForm() {
+		present();
+	}
+
+	@Kroll.method
+	public void startScanner() {
+		autoScan=true;
+		present();
+	}
+
+	@Kroll.method
+	public void present() {
+		Fidel.present(TiApplication.getInstance().getRootOrCurrentActivity());
+
 	}
 
 	// Properties
 	@Kroll.getProperty
-	public String getExampleProp()
-	{
+	public String getExampleProp() {
 		Log.d(LCAT, "get example property");
 		return "hello world";
 	}
-
 
 	@Kroll.setProperty
 	public void setExampleProp(String value) {
@@ -62,4 +102,3 @@ public class TifidelModule extends KrollModule
 	}
 
 }
-

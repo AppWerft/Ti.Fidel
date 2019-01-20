@@ -18,7 +18,7 @@ const Fidel = require('ti.fidel');
 Fidel.init({
 	programId : "XXX",
 	apiKey : "XXX",
-	companyName : "Example,
+	companyName : "Example",
 	privacyURL : "https://example.com/privacy-policy",
 	deleteInstructions : "Delete your card using the app",
 	country : Fidel.COUNTRY_UNITED_KINGDOM

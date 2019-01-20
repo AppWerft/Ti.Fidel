@@ -9,6 +9,11 @@
 package ti.fidel;
 
 import java.io.IOException;
+import android.content.Intent ;
+import android.content.Context ;
+import android.content.Activity ;
+
+
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
@@ -25,14 +30,18 @@ import org.appcelerator.titanium.io.TiFileFactory;
 import org.json.JSONException;
 import org.appcelerator.titanium.util.TiUIHelper;
 import com.fidel.sdk.Fidel;
+import com.fidel.sdk.LinkResult;
+
 import android.graphics.Bitmap;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
 import  	org.json.JSONObject ;
+import org.appcelerator.titanium.util.TiActivityResultHandler;
+import org.appcelerator.titanium.util.TiActivitySupport;
+import org.appcelerator.titanium.util.TiConvert;
 
 @Kroll.module(name = "Tifidel", id = "ti.fidel")
-public class TifidelModule extends KrollModule {
-
+public class TifidelModule extends KrollModule implements TiActivityResultHandler {
 	// Standard Debugging variables
 	private static final String LCAT = "TifidelModule";
 	private static final boolean DBG = TiConfig.LOGD;
@@ -69,6 +78,7 @@ public class TifidelModule extends KrollModule {
 	// Methods
 	@Kroll.method
 	public void init(KrollDict opts) {
+		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = 1234;
 		if (opts.containsKeyAndNotNull("apiKey")) {
 			Fidel.apiKey = opts.getString("apiKey");
 		}
@@ -118,20 +128,26 @@ public class TifidelModule extends KrollModule {
 
 	@Kroll.method
 	public void present() {
-		Fidel.present(TiApplication.getInstance().getRootOrCurrentActivity());
-
+		Context context = TiApplication.getInstance().getApplicationContext();
+		final TiActivitySupport activitySupport = (TiActivitySupport) TiApplication
+				.getInstance().getCurrentActivity();
+		/*activitySupport.launchActivityForResult(intent,
+				REQUEST_CODE_PAYMENT, new PaymentResultHandler());
+				*/
+		Activity act = TiApplication.getInstance().getRootOrCurrentActivity();
+		Fidel.present(act);
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    super.onActivityResult(requestCode, resultCode, data);
 
-	// Properties
-	@Kroll.getProperty
-	public String getExampleProp() {
-		Log.d(LCAT, "get example property");
-		return "hello world";
+	    if(requestCode == Fidel.FIDEL_LINK_CARD_REQUEST_CODE) {
+	        if(data != null && data.hasExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD)) {
+	            LinkResult card = (LinkResult)data.getParcelableExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD);
+
+	            Log.d("d", "CARD ID = " + card.id);
+	        }
+	    }
 	}
-
-	@Kroll.setProperty
-	public void setExampleProp(String value) {
-		Log.d(LCAT, "set example property: " + value);
-	}
-
 }

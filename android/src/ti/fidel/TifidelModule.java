@@ -8,6 +8,7 @@
  */
 package ti.fidel;
 
+import java.io.IOException;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 
@@ -15,16 +16,19 @@ import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollDict;
-
+import org.appcelerator.titanium.io.TiBaseFile;
+import org.appcelerator.titanium.io.TiFileFactory;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.io.TiFileFactory;
 import org.json.JSONException;
+import org.appcelerator.titanium.util.TiUIHelper;
 import com.fidel.sdk.Fidel;
-
+import android.graphics.Bitmap;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
+import  	org.json.JSONObject ;
 
 @Kroll.module(name = "Tifidel", id = "ti.fidel")
 public class TifidelModule extends KrollModule {
@@ -50,9 +54,7 @@ public class TifidelModule extends KrollModule {
 	@Kroll.constant
 	public static final String FIDEL_LINK_CARD_RESULT_CARD = Fidel.FIDEL_LINK_CARD_RESULT_CARD;
 
-	
-private boolean autoScan;
-	
+	private boolean autoScan;
 
 	public TifidelModule() {
 		super();
@@ -70,6 +72,37 @@ private boolean autoScan;
 		if (opts.containsKeyAndNotNull("apiKey")) {
 			Fidel.apiKey = opts.getString("apiKey");
 		}
+		if (opts.containsKeyAndNotNull("bannerImage")) {
+			Fidel.bannerImage = loadImageFromApplication(opts.getString("apiKey"));
+		}
+		if (opts.containsKeyAndNotNull("companyName")) {
+			Fidel.companyName = opts.getString("companyName");
+		}
+		if (opts.containsKeyAndNotNull("country")) {
+			Fidel.country = Fidel.Country.valueOf(opts.getString("country"));
+		}
+		if (opts.containsKeyAndNotNull("privacyURL")) {
+			Fidel.privacyURL = opts.getString("privacyURL");
+		}
+		if (opts.containsKeyAndNotNull("programId")) {
+			Fidel.programId = opts.getString("programId");
+		}
+		if (opts.containsKeyAndNotNull("metaData")) {
+			Fidel.metaData = new JSONObject(opts.getKrollDict("metaData"));
+		}
+	}
+
+	private Bitmap loadImageFromApplication(String imageName) {
+		Bitmap bitmap = null;
+		String url = null;
+		try {
+			url = resolveUrl(null, imageName);
+			TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { url }, false);
+			bitmap = TiUIHelper.createBitmap(file.getInputStream());
+		} catch (IOException e) {
+			Log.e(LCAT, "Fidel only supports local image files " + url);
+		}
+		return bitmap;
 	}
 
 	@Kroll.method
@@ -79,7 +112,7 @@ private boolean autoScan;
 
 	@Kroll.method
 	public void startScanner() {
-		autoScan=true;
+		autoScan = true;
 		present();
 	}
 

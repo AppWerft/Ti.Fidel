@@ -21,12 +21,14 @@ Fidel.init({
 	companyName : "Example",
 	privacyURL : "https://example.com/privacy-policy",
 	deleteInstructions : "Delete your card using the app",
-	country : Fidel.COUNTRY_UNITED_KINGDOM
+	country : Fidel.COUNTRY_UNITED_KINGDOM,
+	paymentDidComplete : onResult
 });	
 Fidel.paymentDidComplete = onResult;
 Fidel.addEventListener("paymentDidComplete",onResult)
 Fidel.present();
-function onResult() {
+function onResult(e) {
+	console.log(e);
 }
 ```
 
@@ -36,9 +38,9 @@ function onResult() {
 
 * Fidel.COUNTRY\_UNITED\_KINGDOM
 * Fidel.COUNTRY\_UNITED\_STATES
-* Fidel.COUNTRY\_UNITED\_STATES
 * Fidel.COUNTRY\_SWEDEN
 * Fidel.COUNTRY\_JAPAN  
+* Fidel.COUNTRY\_IRLAND
 
 
 ## Methods
@@ -64,7 +66,7 @@ function onResult() {
 
 ## Callbacks
 
-You can use an event listener or a property, see example above.
+You can use as event listener, as property in init-method or as a module property, see example above.
 
 `paymentDidComplete`
 

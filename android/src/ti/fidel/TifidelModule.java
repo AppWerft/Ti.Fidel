@@ -94,7 +94,10 @@ public class TifidelModule extends KrollModule {
 			Fidel.metaData = new JSONObject(opts.getKrollDict("metaData"));
 		}
 		if (opts.containsKeyAndNotNull("paymentDidComplete")) {
-			onPaymentDidCompleteCallback =  (KrollFunction) opts.get("paymentDidComplete");
+			Object o = opts.get("paymentDidComplete");
+			if (o instanceof KrollFunction) {
+				onPaymentDidCompleteCallback = (KrollFunction) o;
+			}
 		}
 		if (hasProperty("paymentDidComplete")) {
 			Object o = getProperty("paymentDidComplete");

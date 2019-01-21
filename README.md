@@ -18,7 +18,7 @@ In folder gradle is a gradle script `build.gradle`. With it you can resolcve dep
 gradle tasks
 gradle getDeps
 ```
-After this you can copy all archives to `android/lib`
+After this you can copy all archives from folder `allPackages` to `android/lib`
 
 ## Basic usage
 

@@ -78,7 +78,6 @@ public class TifidelModule extends KrollModule implements onActivityResult {
 	// Methods
 	@Kroll.method
 	public void init(KrollDict opts) {
-		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = 1234;
 		if (opts.containsKeyAndNotNull("apiKey")) {
 			Fidel.apiKey = opts.getString("apiKey");
 		}
@@ -128,14 +127,14 @@ public class TifidelModule extends KrollModule implements onActivityResult {
 
 	@Kroll.method
 	public void present() {
-		Activity currAct = TiApplication.getInstance().getRootOrCurrentActivity();
-		final TiActivitySupport activitySupport = (TiActivitySupport) currAct;
+		TiActivitySupport activitySupport = (TiActivitySupport) TiApplication.getAppCurrentActivity();
+		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = activitySupport.getUniqueResultCode();
 		// this doesnt work, because we have no access to internal intent resp nee activity
 		/*activitySupport.launchActivityForResult(intent,
 				REQUEST_CODE_PAYMENT, new PaymentResultHandler());
 		*/	
-		/* Fidel uses this interface and aspects the result in onActivityResultm, not availble in module*/
-		Fidel.present(currAct);
+		/* Fidel uses this interface and aspects the result in onActivityResult, not availble in module*/
+		Fidel.present(TiApplication.getAppCurrentActivity());
 	}
 	
 	@Override

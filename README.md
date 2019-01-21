@@ -36,7 +36,6 @@ Fidel.present();
 * Fidel.COUNTRY\_SWEDEN
 * Fidel.COUNTRY\_JAPAN  
 
-### Codes
 
 ## Methods
 

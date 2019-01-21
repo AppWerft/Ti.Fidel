@@ -10,6 +10,16 @@ Getting creds from [Fidel](http://fidel.uk/). The creds you can find under the r
 
 The library uses googles auth library. This library has a dependency to core and basement part of google services. If you use further modules which uses google play services you have to ensure that the same version is in use. maybe you have to play with *.jar files in module/lib folder.
 
+
+## Building aars
+In folder gradle is a gradle script `build.gradle`. With it you can resolcve dependencies.
+
+```
+gradle tasks
+gradle getDeps
+```
+After this you can copy all archives to `android/lib`
+
 ## Basic usage
 
 

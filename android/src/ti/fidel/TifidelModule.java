@@ -9,37 +9,31 @@
 package ti.fidel;
 
 import java.io.IOException;
-import android.content.Intent;
-import android.content.Context;
-import android.app.Activity;
 
-import org.appcelerator.kroll.KrollModule;
-import org.appcelerator.kroll.annotations.Kroll;
-
-import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
-import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.titanium.io.TiBaseFile;
-import org.appcelerator.titanium.io.TiFileFactory;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
-import org.appcelerator.titanium.TiApplication;
-import org.appcelerator.titanium.io.TiFileFactory;
-import org.json.JSONException;
-import org.appcelerator.titanium.util.TiUIHelper;
-import com.fidel.sdk.Fidel;
-import com.fidel.sdk.LinkResult;
-
-import android.graphics.Bitmap;
-import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
-import org.json.JSONObject;
+import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.titanium.io.TiBaseFile;
+import org.appcelerator.titanium.io.TiFileFactory;
 import org.appcelerator.titanium.util.TiActivityResultHandler;
 import org.appcelerator.titanium.util.TiActivitySupport;
-import org.appcelerator.titanium.util.TiConvert;
+import org.appcelerator.titanium.util.TiUIHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-@Kroll.module(name = "Tifidel", id = "ti.fidel")
+import com.fidel.sdk.Fidel;
+import com.fidel.sdk.LinkResult;
+import com.fidel.sdk.view.EnterCardDetailsActivity;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+
+@Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "paymentDidComplete" })
 public class TifidelModule extends KrollModule {
 	// Standard Debugging variables
 	private static final String LCAT = "TifidelModule";
@@ -63,6 +57,7 @@ public class TifidelModule extends KrollModule {
 	public static final String FIDEL_LINK_CARD_RESULT_CARD = Fidel.FIDEL_LINK_CARD_RESULT_CARD;
 
 	private boolean autoScan;
+	private KrollFunction onPaymentDidCompleteCallback;
 
 	public TifidelModule() {
 		super();
@@ -98,6 +93,15 @@ public class TifidelModule extends KrollModule {
 		if (opts.containsKeyAndNotNull("metaData")) {
 			Fidel.metaData = new JSONObject(opts.getKrollDict("metaData"));
 		}
+		if (opts.containsKeyAndNotNull("paymentDidComplete")) {
+			onPaymentDidCompleteCallback =  (KrollFunction) opts.get("paymentDidComplete");
+		}
+		if (hasProperty("paymentDidComplete")) {
+			Object o = getProperty("paymentDidComplete");
+			if (o instanceof KrollFunction) {
+				onPaymentDidCompleteCallback = (KrollFunction) o;
+			}
+		}
 	}
 
 	private Bitmap loadImageFromApplication(String imageName) {
@@ -126,24 +130,11 @@ public class TifidelModule extends KrollModule {
 
 	@Kroll.method
 	public void present() {
-		Context context = TiApplication.getInstance().getApplicationContext();
-		Activity activity = TiApplication.getAppCurrentActivity();
-		Fidel.present(activity);
-
-		TiActivitySupport support = (TiActivitySupport) activity;
+		TiActivitySupport support = (TiActivitySupport) TiApplication.getAppCurrentActivity();
 		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = support.getUniqueResultCode();
-		// this doesnt work, because we have no access to internal intent resp. the
-		// internal activity
-		/*
-		 * final Intent intent = new Intent(context, FidelActivity.class);
-		 * activitySupport.launchActivityForResult(intent, REQUEST_CODE_PAYMENT, new
-		 * PaymentResultHandler());
-		 */
-		/*
-		 * Fidel uses this interface and aspects the result in onActivityResult, not
-		 * availble in module
-		 */
-
+		support.launchActivityForResult(
+				new Intent(TiApplication.getInstance().getApplicationContext(), EnterCardDetailsActivity.class),
+				Fidel.FIDEL_LINK_CARD_REQUEST_CODE, new PaymentResultHandler());
 	}
 
 	private final class PaymentResultHandler implements TiActivityResultHandler {
@@ -155,42 +146,36 @@ public class TifidelModule extends KrollModule {
 			if (requestCode == Fidel.FIDEL_LINK_CARD_REQUEST_CODE) {
 				if (data != null && data.hasExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD)) {
 					LinkResult card = (LinkResult) data.getParcelableExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD);
+
+					KrollDict event = new KrollDict();
+					event.put("accountId", card.accountId);
+					event.put("countryCode", card.countryCode);
+					event.put("created", card.created);
+					event.put("expDate", card.expDate);
+					event.put("expMonth", card.expMonth);
+					event.put("expYear", card.expYear);
+					event.put("id", card.id);
+					event.put("lastNumbers", card.lastNumbers);
+					event.put("live", card.live);
+					event.put("mapped", card.mapped);
+					try {
+						event.put("metaData", new KrollDict(card.metaData));
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					event.put("programId", card.programId);
+					event.put("scheme", card.scheme);
+					event.put("type", card.type);
+					event.put("updated", card.updated);
+					event.put("describeContents", card.describeContents());
 					if (hasListeners("paymentDidComplete")) {
-						KrollDict event = new KrollDict();
-						event.put("accountId", card.accountId);
-						event.put("countryCode", card.countryCode);
-						event.put("created", card.created);
-						event.put("expDate", card.expDate);
-						event.put("expMonth", card.expMonth);
-						event.put("expYear", card.expYear);
-						event.put("id", card.id);
-						event.put("lastNumbers", card.lastNumbers);
-						event.put("live", card.live);
-						event.put("mapped", card.mapped);
-						try {
-							event.put("metaData", new KrollDict(card.metaData));
-						} catch (JSONException e) {
-							e.printStackTrace();
-						}
-						event.put("programId", card.programId);
-						event.put("scheme", card.scheme);
-						event.put("type", card.type);
-						event.put("updated", card.updated);
-						event.put("describeContents", card.describeContents());
-										fireEvent("paymentDidComplete", event);
+						fireEvent("paymentDidComplete", event);
+					}
+					if (onPaymentDidCompleteCallback != null) {
+						onPaymentDidCompleteCallback.call(getKrollObject(), event);
 					}
 				}
 			}
 		}
 	}
-	/*
-	 * @Override protected void onActivityResult(int requestCode, int resultCode,
-	 * Intent data) { super.onActivityResult(requestCode, resultCode, data);
-	 * 
-	 * if(requestCode == Fidel.FIDEL_LINK_CARD_REQUEST_CODE) { if(data != null &&
-	 * data.hasExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD)) { LinkResult card =
-	 * (LinkResult)data.getParcelableExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD);
-	 * 
-	 * Log.d("d", "CARD ID = " + card.id); } } }
-	 */
 }

@@ -23,7 +23,11 @@ Fidel.init({
 	deleteInstructions : "Delete your card using the app",
 	country : Fidel.COUNTRY_UNITED_KINGDOM
 });	
+Fidel.paymentDidComplete = onResult;
+Fidel.addEventListener("paymentDidComplete",onResult)
 Fidel.present();
+function onResult() {
+}
 ```
 
 ## Constants
@@ -43,7 +47,13 @@ Fidel.present();
 #### keys of object (parameters of init())
 * autoScan: Boolean
 * apiKey: String
-
+* autoScan: Boolean
+* companyName: String
+* country: 1 of countries above
+* deleteInstructions: String
+* metadata: Object
+* privacyUrl: String
+* programmId: String
 
 
 ### present()
@@ -51,3 +61,27 @@ Fidel.present();
 ### startScanner()
 
 ### createForm()
+
+## Callbacks
+
+You can use an event listener or a property, see example above.
+
+`paymentDidComplete`
+
+With these properties:
+
+* accountId
+* countryCode
+* created
+* expDate
+* expMonth
+* expYear
+* id
+* lastNumbers
+* live
+* mapped
+* metaData
+* programId
+* schemetype
+* updated
+* describeContents

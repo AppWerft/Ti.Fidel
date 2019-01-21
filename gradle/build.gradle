@@ -1,0 +1,16 @@
+apply plugin: 'java'
+
+repositories {
+    google()
+    mavenCentral()
+  maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compile 'com.github.FidelLimited:android-sdk:1.2.2'
+}
+
+task getDeps(type: Copy) {
+    from sourceSets.main.runtimeClasspath
+    into 'allPackages'
+}

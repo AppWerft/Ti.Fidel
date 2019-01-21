@@ -9,10 +9,9 @@
 package ti.fidel;
 
 import java.io.IOException;
-import android.content.Intent ;
-import android.content.Context ;
+import android.content.Intent;
+import android.content.Context;
 import android.app.Activity;
-
 
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
@@ -35,13 +34,13 @@ import com.fidel.sdk.LinkResult;
 import android.graphics.Bitmap;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
-import  	org.json.JSONObject ;
+import org.json.JSONObject;
 import org.appcelerator.titanium.util.TiActivityResultHandler;
 import org.appcelerator.titanium.util.TiActivitySupport;
 import org.appcelerator.titanium.util.TiConvert;
 
 @Kroll.module(name = "Tifidel", id = "ti.fidel")
-public class TifidelModule extends KrollModule implements onActivityResult {
+public class TifidelModule extends KrollModule {
 	// Standard Debugging variables
 	private static final String LCAT = "TifidelModule";
 	private static final boolean DBG = TiConfig.LOGD;
@@ -129,28 +128,69 @@ public class TifidelModule extends KrollModule implements onActivityResult {
 	public void present() {
 		Context context = TiApplication.getInstance().getApplicationContext();
 		Activity activity = TiApplication.getAppCurrentActivity();
+		Fidel.present(activity);
+
 		TiActivitySupport support = (TiActivitySupport) activity;
 		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = support.getUniqueResultCode();
-		// this doesnt work, because we have no access to internal intent resp. the internal activity
+		// this doesnt work, because we have no access to internal intent resp. the
+		// internal activity
 		/*
-		 * final Intent intent = new Intent(context, FidelActivity.class); 
-		 * activitySupport.launchActivityForResult(intent,
-				REQUEST_CODE_PAYMENT, new PaymentResultHandler());
-		*/	
-		/* Fidel uses this interface and aspects the result in onActivityResult, not availble in module*/
-		Fidel.present(activity);
-	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
+		 * final Intent intent = new Intent(context, FidelActivity.class);
+		 * activitySupport.launchActivityForResult(intent, REQUEST_CODE_PAYMENT, new
+		 * PaymentResultHandler());
+		 */
+		/*
+		 * Fidel uses this interface and aspects the result in onActivityResult, not
+		 * availble in module
+		 */
 
-	    if(requestCode == Fidel.FIDEL_LINK_CARD_REQUEST_CODE) {
-	        if(data != null && data.hasExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD)) {
-	            LinkResult card = (LinkResult)data.getParcelableExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD);
-
-	            Log.d("d", "CARD ID = " + card.id);
-	        }
-	    }
 	}
+
+	private final class PaymentResultHandler implements TiActivityResultHandler {
+		public void onError(Activity arg0, int arg1, Exception e) {
+			Log.e(LCAT, e.getMessage());
+		}
+
+		public void onResult(Activity dummy, int requestCode, int resultCode, Intent data) {
+			if (requestCode == Fidel.FIDEL_LINK_CARD_REQUEST_CODE) {
+				if (data != null && data.hasExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD)) {
+					LinkResult card = (LinkResult) data.getParcelableExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD);
+					if (hasListeners("paymentDidComplete")) {
+						KrollDict event = new KrollDict();
+						event.put("accountId", card.accountId);
+						event.put("countryCode", card.countryCode);
+						event.put("created", card.created);
+						event.put("expDate", card.expDate);
+						event.put("expMonth", card.expMonth);
+						event.put("expYear", card.expYear);
+						event.put("id", card.id);
+						event.put("lastNumbers", card.lastNumbers);
+						event.put("live", card.live);
+						event.put("mapped", card.mapped);
+						try {
+							event.put("metaData", new KrollDict(card.metaData));
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						event.put("programId", card.programId);
+						event.put("scheme", card.scheme);
+						event.put("type", card.type);
+						event.put("updated", card.updated);
+						event.put("describeContents", card.describeContents());
+										fireEvent("paymentDidComplete", event);
+					}
+				}
+			}
+		}
+	}
+	/*
+	 * @Override protected void onActivityResult(int requestCode, int resultCode,
+	 * Intent data) { super.onActivityResult(requestCode, resultCode, data);
+	 * 
+	 * if(requestCode == Fidel.FIDEL_LINK_CARD_REQUEST_CODE) { if(data != null &&
+	 * data.hasExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD)) { LinkResult card =
+	 * (LinkResult)data.getParcelableExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD);
+	 * 
+	 * Log.d("d", "CARD ID = " + card.id); } } }
+	 */
 }

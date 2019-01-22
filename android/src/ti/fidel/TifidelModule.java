@@ -6,7 +6,7 @@ import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
-import org.appcelerator.kroll.common.TiConfig;
+import org.appcelerator.kroll.common.TiMessenger;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.io.TiBaseFile;
 import org.appcelerator.titanium.io.TiFileFactory;
@@ -24,7 +24,7 @@ import android.graphics.Bitmap;
 
 @Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "paymentDidComplete" })
 public class TifidelModule extends KrollModule {
-	
+
 	@Kroll.constant
 	public static final String COUNTRY_UNITED_KINGDOM = "UNITED_KINGDOM";
 	@Kroll.constant
@@ -37,8 +37,8 @@ public class TifidelModule extends KrollModule {
 	public static final String COUNTRY_IRELAND = "IRELAND";
 
 	private static final String PROP_PAYMENT_DID_COMPLETE = "paymentDidComplete";
-	private static final String LCAT = "TiFidel";
-	
+	private static final String LCAT = "💰 TiFidel";
+
 	private static KrollFunction onPaymentDidCompleteCallback;
 
 	public TifidelModule() {
@@ -84,6 +84,9 @@ public class TifidelModule extends KrollModule {
 				onPaymentDidCompleteCallback = (KrollFunction) o;
 			}
 		}
+		Log.d(LCAT, "country: " + Fidel.country.toString());
+		Log.d(LCAT, "programmId: " + Fidel.programId);
+
 	}
 
 	private Bitmap loadImageFromApplication(String imageName) {
@@ -112,11 +115,24 @@ public class TifidelModule extends KrollModule {
 
 	@Kroll.method
 	public void present() {
-		TiActivitySupport support = (TiActivitySupport) TiApplication.getAppCurrentActivity();
+		final TiActivitySupport support = (TiActivitySupport) TiApplication.getAppCurrentActivity();
+		final Intent intent = new Intent(TiApplication.getInstance().getApplicationContext(), EnterCardDetailsActivity.class);
 		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = support.getUniqueResultCode();
-		support.launchActivityForResult(
-				new Intent(TiApplication.getInstance().getApplicationContext(), EnterCardDetailsActivity.class),
-				Fidel.FIDEL_LINK_CARD_REQUEST_CODE, new PaymentResultHandler());
+		Log.d(LCAT, "FIDEL_LINK_CARD_REQUEST_CODE: " + Fidel.FIDEL_LINK_CARD_REQUEST_CODE);
+		if (TiApplication.isUIThread()) {
+			Log.d(LCAT,"present of fidel in UIthread");
+			support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, new PaymentResultHandler());
+		} else {
+			Log.d(LCAT,"present of fidel outside UIthread ==> sending message");
+			TiMessenger.postOnMain(new Runnable() {
+				@Override
+				public void run() {
+					Log.d(LCAT,"in UI thread");
+					support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE,
+							new PaymentResultHandler());
+				}
+			});
+		}
 	}
 
 	private final class PaymentResultHandler implements TiActivityResultHandler {
@@ -155,6 +171,7 @@ public class TifidelModule extends KrollModule {
 					if (onPaymentDidCompleteCallback != null) {
 						onPaymentDidCompleteCallback.call(getKrollObject(), event);
 					}
+					Log.d(LCAT, "event: " + event.toString());
 				}
 			}
 		}

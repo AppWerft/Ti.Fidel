@@ -15,4 +15,5 @@ do
    cp -v ../../$LIBS/$a/*   modules/android/$ID/$VERSION/libs/$a/	
 done
 zip -umr $MODULENAME modules/
+unzip -ou $MODULENAME -d '/Users/fuerst/Library/Application Support/Titanium/'
 cd ../../

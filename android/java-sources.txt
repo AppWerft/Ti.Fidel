@@ -1,6 +1,5 @@
 "/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/src/ti/fidel/TifidelModule.java"
 "/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/build/generated/java/ti/fidel/TifidelBootstrap.java"
-"/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/build/generated/r/android/arch/lifecycle/R.java"
 "/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/build/generated/r/android/support/compat/R.java"
 "/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/build/generated/r/android/support/constraint/R.java"
 "/Users/fuerst/Documents/APPC_WORKSPACE/FIN/Ti.Fidel/android/build/generated/r/android/support/coreui/R.java"

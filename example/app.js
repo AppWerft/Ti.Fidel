@@ -12,28 +12,19 @@ var label = Ti.UI.createLabel();
 win.add(label);
 win.open();
 
-// TODO: write your module tests here
-var tifidel = require('ti.fidel');
+const Fidel = require('ti.fidel');
+Fidel.paymentDidComplete = function(e) {
+	console.log(e);	
+};
+
+Fidel.init(require('options'));
+
+Fidel.startScan();
+
 Ti.API.info("module is => " + tifidel);
 
 label.text = tifidel.example();
 
-Ti.API.info("module exampleProp is => " + tifidel.exampleProp);
-tifidel.exampleProp = "This is a test value";
 
-if (Ti.Platform.name == "android") {
-	var proxy = tifidel.createExample({
-		message: "Creating an example Proxy",
-		backgroundColor: "red",
-		width: 100,
-		height: 100,
-		top: 100,
-		left: 150
-	});
 
-	proxy.printMessage("Hello world!");
-	proxy.message = "Hi world!.  It's me again.";
-	proxy.printMessage("Hello world!");
-	win.add(proxy);
-}
 

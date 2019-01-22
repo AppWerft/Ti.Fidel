@@ -53,4 +53,12 @@
 	</target>
 
 	<import file="${titanium.platform}/../module/android/build.xml"/>
+<!-- Copy native libs -->
+     <target name="post.compile">
+    <copy todir="${libs}" description="Copy native libs >>>>">
+        <fileset dir="nativelibs">
+            <include name="**/*.so"/>
+        </fileset>
+    </copy>
+</target>
 </project>

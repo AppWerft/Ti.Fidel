@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0.0
+apiversion: 4
+architectures: arm64-v8a armeabi-v7a x86
+description: Fidel
+author: Rainer
+license: All rights reserved
+copyright: Copyright (c) 2019 by Your Company
+
+# these should not be edited
+name: tifidel
+moduleid: ti.fidel
+guid: 6be2528c-7125-4e6e-93f8-66e328a85814
+platform: android
+minsdk: 7.1.0.GA

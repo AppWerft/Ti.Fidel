@@ -22,9 +22,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
-@Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "paymentDidComplete" })
+@Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "onPaymentDidComplete" })
 public class TifidelModule extends KrollModule {
-
+	private static final String LCAT = "💰 TiFidel";
+	
 	@Kroll.constant
 	public static final String COUNTRY_UNITED_KINGDOM = "UNITED_KINGDOM";
 	@Kroll.constant
@@ -37,9 +38,9 @@ public class TifidelModule extends KrollModule {
 	public static final String COUNTRY_IRELAND = "IRELAND";
 
 	private static final String PROP_PAYMENT_DID_COMPLETE = "paymentDidComplete";
-	private static final String LCAT = "💰 TiFidel";
-
+	private static final String PROP_ERROR = "Error";
 	private static KrollFunction onPaymentDidCompleteCallback;
+	private static KrollFunction onErrorCallback;
 
 	public TifidelModule() {
 		super();
@@ -78,15 +79,21 @@ public class TifidelModule extends KrollModule {
 				onPaymentDidCompleteCallback = (KrollFunction) o;
 			}
 		}
-		if (hasProperty(PROP_PAYMENT_DID_COMPLETE)) {
-			Object o = getProperty(PROP_PAYMENT_DID_COMPLETE);
+		if (hasProperty("onPaymentDidComplete")) {
+			Object o = getProperty("onPaymentDidComplete");
 			if (o instanceof KrollFunction) {
 				onPaymentDidCompleteCallback = (KrollFunction) o;
 			}
 		}
+		if (hasProperty("onErrorComplete")) {
+			Object o = getProperty("onErrorComplete");
+			if (o instanceof KrollFunction) {
+				onErrorCallback = (KrollFunction) o;
+			}
+		}
 		Log.d(LCAT, "country: " + Fidel.country.toString());
 		Log.d(LCAT, "programmId: " + Fidel.programId);
-
+		
 	}
 
 	private Bitmap loadImageFromApplication(String imageName) {
@@ -136,8 +143,14 @@ public class TifidelModule extends KrollModule {
 	}
 
 	private final class PaymentResultHandler implements TiActivityResultHandler {
-		public void onError(Activity arg0, int arg1, Exception e) {
+		public void onError(Activity activity, int requestCode, Exception e) {
 			Log.e(LCAT, e.getMessage());
+			if (onErrorCallback != null) {
+				KrollDict event = new KrollDict();
+				event.put("message",e.getMessage());
+				event.put("error",e.toString());
+				onErrorCallback.call(getKrollObject(), event);
+			}
 		}
 
 		public void onResult(Activity dummy, int requestCode, int resultCode, Intent data) {

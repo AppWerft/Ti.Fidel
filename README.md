@@ -12,13 +12,19 @@ The library uses googles auth library. This library has a dependency to core and
 
 
 ## Building aars
-In folder gradle is a gradle script `build.gradle`. With it you can resolcve dependencies.
+In folder android is a gradle script `build.gradle`. This script resolves the dependencies. Go into `android` folder and type
 
 ```
 gradle tasks
 gradle getDeps
 ```
-After this you can copy all archives from folder `allPackages` to `android/lib`
+In folder `lib` are now all libraries. Some libraries comes from Titanium SDK, therefore you have to remove these 3 files below:
+
+* runtime-VERSION.aar
+* support-annotations-VERSION.jar
+* common-VERSION.jar
+
+If you want to edit the module it is a good idea to extract the jar from fidel.aar (android-sdk-1.2.2.aar) and copy into a extrafolder and point the class path to this file. This help the IDE.
 
 ## Basic usage
 

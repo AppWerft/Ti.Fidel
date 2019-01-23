@@ -26,7 +26,7 @@ import android.graphics.Bitmap;
 
 @Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "onPaymentDidComplete" })
 public class TifidelModule extends KrollModule implements TiActivityResultHandler {
-	private static final String LCAT = "💰 TiFidel";
+	private static final String LCAT = "TiAPI💰TiFidel";
 	private static TifidelModule _instance;
 	@Kroll.constant
 	public static final String COUNTRY_UNITED_KINGDOM = "UNITED_KINGDOM";

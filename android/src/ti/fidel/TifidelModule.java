@@ -24,7 +24,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 
-@Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "onPaymentDidComplete" })
+@Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "onCardLinkSuccess" })
 public class TifidelModule extends KrollModule implements TiActivityResultHandler {
 	private static final String LCAT = "TiAPI💰TiFidel";
 	private static TifidelModule _instance;
@@ -39,10 +39,10 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 	@Kroll.constant
 	public static final String COUNTRY_IRELAND = "IRELAND";
 
-	private static final String PROP_PAYMENT_DID_COMPLETE = "paymentDidComplete";
-	private static final String PROP_ONPAYMENT_DID_COMPLETE = "onPaymentDidComplete";
+	private static final String PROP_CARD_LINK_SUCCESS = "cardLinkSuccess";
+	private static final String PROP_ONCARD_LINK_SUCCESS = "onCardLinkSuccess";
 	private static final String PROP_ERROR = "Error";
-	private static KrollFunction onPaymentDidCompleteCallback;
+	private static KrollFunction onCardLinkSuccessCallback;
 	private static KrollFunction onErrorCallback;
 
 	public TifidelModule() {
@@ -62,7 +62,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 			Fidel.programId = opts.getString("programId");
 		}
 		if (opts.containsKeyAndNotNull("bannerImage")) {
-			Fidel.bannerImage = loadImageFromApplication(opts.getString("apiKey"));
+			Fidel.bannerImage = loadImageFromApplication(opts.getString("bannerImage"));
 		}
 		if (opts.containsKeyAndNotNull("companyName")) {
 			Fidel.companyName = opts.getString("companyName");
@@ -76,21 +76,21 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 		if (opts.containsKeyAndNotNull("metaData")) {
 			Fidel.metaData = new JSONObject(opts.getKrollDict("metaData"));
 		}
-		if (opts.containsKeyAndNotNull(PROP_PAYMENT_DID_COMPLETE)) {
-			Object o = opts.get(PROP_PAYMENT_DID_COMPLETE);
+		if (opts.containsKeyAndNotNull(PROP_CARD_LINK_SUCCESS)) {
+			Object o = opts.get(PROP_CARD_LINK_SUCCESS);
 			if (o instanceof KrollFunction) {
-				onPaymentDidCompleteCallback = (KrollFunction) o;
+				onCardLinkSuccessCallback = (KrollFunction) o;
 			}
 		}
-		if (hasProperty(PROP_ONPAYMENT_DID_COMPLETE)) {
-			Object o = getProperty(PROP_ONPAYMENT_DID_COMPLETE);
+		if (hasProperty(PROP_ONCARD_LINK_SUCCESS)) {
+			Object o = getProperty(PROP_ONCARD_LINK_SUCCESS);
 			if (o instanceof KrollFunction) {
-				onPaymentDidCompleteCallback = (KrollFunction) o;
-				Log.w(LCAT, "onPaymentDidCompleteCallback imported");
+				onCardLinkSuccessCallback = (KrollFunction) o;
+				Log.w(LCAT, "onCardLinkSuccessCallback imported");
 			} else
-				Log.w(LCAT, PROP_ONPAYMENT_DID_COMPLETE +" isn't a Krollfunction");
+				Log.w(LCAT, PROP_ONCARD_LINK_SUCCESS +" isn't a Krollfunction");
 		} else
-			Log.w(LCAT, PROP_PAYMENT_DID_COMPLETE + " is missing");
+			Log.w(LCAT, PROP_ONCARD_LINK_SUCCESS + " is missing");
 		if (hasProperty("onErrorComplete")) {
 			Object o = getProperty("onErrorComplete");
 			if (o instanceof KrollFunction) {
@@ -134,10 +134,8 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 				EnterCardDetailsActivity.class);
 		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = support.getUniqueResultCode();
 		if (TiApplication.isUIThread()) {
-			Log.d(LCAT, "present of fidel in UIthread");
 			support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, this);
 		} else {
-			Log.d(LCAT, "present of fidel outside UIthread ==> sending message");
 			TiMessenger.postOnMain(new Runnable() {
 				@Override
 				public void run() {
@@ -187,13 +185,13 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 						e.printStackTrace();
 					}
 				} 
-				if (hasListeners(PROP_PAYMENT_DID_COMPLETE)) {
-					fireEvent(PROP_PAYMENT_DID_COMPLETE, event);
+				if (hasListeners(PROP_CARD_LINK_SUCCESS)) {
+					fireEvent(PROP_CARD_LINK_SUCCESS, event);
 				}
-				if (onPaymentDidCompleteCallback != null) {
-					onPaymentDidCompleteCallback.callAsync(getKrollObject(), event);
+				if (onCardLinkSuccessCallback != null) {
+					onCardLinkSuccessCallback.callAsync(getKrollObject(), event);
 					Log.d(LCAT,"events sent back to JS layer");
-				} else Log.w(LCAT, "onPaymentDidCompleteCallback  is null, cannot send back data.");
+				} else Log.w(LCAT, "onCardLinkSuccessCallback  is null, cannot send back data.");
 
 			} else
 				Log.w(LCAT, "invalid intent data");

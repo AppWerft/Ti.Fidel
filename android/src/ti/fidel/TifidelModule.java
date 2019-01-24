@@ -107,6 +107,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 		String url = null;
 		try {
 			url = resolveUrl(null, imageName);
+			Log.d(LCAT,"bannerInmageUrl: " + url);
 			TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { url }, false);
 			bitmap = TiUIHelper.createBitmap(file.getInputStream());
 		} catch (IOException e) {

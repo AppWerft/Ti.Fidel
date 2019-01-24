@@ -27,7 +27,7 @@ import android.graphics.Bitmap;
 @Kroll.module(name = "Tifidel", id = "ti.fidel", propertyAccessors = { "onCardLinkSuccess" })
 public class TifidelModule extends KrollModule implements TiActivityResultHandler {
 	private static final String LCAT = "TiAPI💰TiFidel";
-	private static TifidelModule _instance;
+	private static TifidelModule that;
 	@Kroll.constant
 	public static final String COUNTRY_UNITED_KINGDOM = "UNITED_KINGDOM";
 	@Kroll.constant
@@ -124,19 +124,19 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 
 	@Kroll.method
 	public void present() {
-		_instance = this;
+		that= this;
 		final TiActivitySupport support = (TiActivitySupport) TiApplication.getAppCurrentActivity();
 		final Intent intent = new Intent(TiApplication.getInstance().getApplicationContext(),
 				EnterCardDetailsActivity.class);
 		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = support.getUniqueResultCode();
 		if (TiApplication.isUIThread()) {
-			Log.d(LCAT, "bannerImage (bytes): " + Fidel.bannerImage.getRowBytes());
-			support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, this);
+			Log.d(LCAT, " byteCounts of bannerImage: " + Fidel.bannerImage.getByteCount());
+			support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, that);
 		} else {
 			TiMessenger.postOnMain(new Runnable() {
 				@Override
 				public void run() {
-					support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, _instance);
+					support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, that);
 				}
 			});
 		}

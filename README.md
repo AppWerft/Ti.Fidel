@@ -4,12 +4,11 @@ Axways Titanioum module for communication with Fidel system. Fidel uses opencv t
 
 ## Prerequisites
 
-Getting creds from [Fidel](http://fidel.uk/). The creds you can find under the right top account button. Here you find SDK keys (public and secret). Both you need for usage.
+Getting creds from [Fidel](http://fidel.uk/). The creds you can find under the right top account button. Here you find SDK keys. Here you need the public key. 
 
 ##  Google services
 
-The library uses googles auth library. This library has a dependency to core and basement part of google services. If you use further modules which uses google play services you have to ensure that the same version is in use. maybe you have to play with *.jar files in module/lib folder.
-
+The library uses some libraries from googles playservice suite. For this dependency a requirement is inside timodule.xml. 
 
 ## Building aars
 In folder android is a gradle script `build.gradle`. This script resolves the dependencies. Go into `android` folder and type
@@ -75,16 +74,17 @@ function onResult(e) {
 
 
 ### present()
+Generic method.
 
 ### startScanner()
+Convenience method for direct call the scanner
 
-### createForm()
 
 ## Callbacks
 
 You can use as event listener, as property in init-method or as a module property, see example above.
 
-`paymentDidComplete`
+`onCardLinkSuccess` resp.  `cardLinkSuccess`
 
 With these properties:
 

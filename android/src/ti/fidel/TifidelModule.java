@@ -86,9 +86,8 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 			Object o = getProperty(PROP_ONCARD_LINK_SUCCESS);
 			if (o instanceof KrollFunction) {
 				onCardLinkSuccessCallback = (KrollFunction) o;
-				Log.w(LCAT, "onCardLinkSuccessCallback imported");
 			} else
-				Log.w(LCAT, PROP_ONCARD_LINK_SUCCESS +" isn't a Krollfunction");
+				Log.w(LCAT, PROP_ONCARD_LINK_SUCCESS + " isn't a Krollfunction");
 		} else
 			Log.w(LCAT, PROP_ONCARD_LINK_SUCCESS + " is missing");
 		if (hasProperty("onErrorComplete")) {
@@ -97,24 +96,18 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 				onErrorCallback = (KrollFunction) o;
 			}
 		}
-		Log.d(LCAT, "country: " + Fidel.country.toString());
-		Log.d(LCAT, "programmId: " + Fidel.programId);
-
 	}
 
 	private Bitmap loadImageFromApplication(String imageName) {
 		Bitmap bitmap = null;
-		String url = null;
 		try {
-			url = resolveUrl(null, imageName);
-			Log.d(LCAT,"bannerInmageUrl: " + url);
-			TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { url }, false);
-			Log.d(LCAT,"TiBaseFile: " + file.nativePath());
+			TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { resolveUrl(null, imageName) }, false);
 			bitmap = TiUIHelper.createBitmap(file.getInputStream());
 		} catch (IOException e) {
-			Log.e(LCAT, "Fidel only supports local image files " + url);
+			Log.e(LCAT, "Fidel only supports local image files " + imageName);
 		}
-		Log.d(LCAT,"Dimensions of bannerImage: " + bitmap.getWidth()+ "x"+bitmap.getHeight());
+		Log.d(LCAT, "Dimensions of bannerImage: " + bitmap.getWidth() + "x" + bitmap.getHeight() + " rowBytes"
+				+ bitmap.getRowBytes() + " byteCounts" + bitmap.getByteCount());
 		return bitmap;
 	}
 
@@ -137,7 +130,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 				EnterCardDetailsActivity.class);
 		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = support.getUniqueResultCode();
 		if (TiApplication.isUIThread()) {
-			Log.d(LCAT,"bannerImage (bytes): " + Fidel.bannerImage.getRowBytes());
+			Log.d(LCAT, "bannerImage (bytes): " + Fidel.bannerImage.getRowBytes());
 			support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, this);
 		} else {
 			TiMessenger.postOnMain(new Runnable() {
@@ -188,14 +181,15 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-				} 
+				}
 				if (hasListeners(PROP_CARD_LINK_SUCCESS)) {
 					fireEvent(PROP_CARD_LINK_SUCCESS, event);
 				}
 				if (onCardLinkSuccessCallback != null) {
 					onCardLinkSuccessCallback.callAsync(getKrollObject(), event);
-					Log.d(LCAT,"events sent back to JS layer");
-				} else Log.w(LCAT, "onCardLinkSuccessCallback  is null, cannot send back data.");
+					Log.d(LCAT, "events sent back to JS layer");
+				} else
+					Log.w(LCAT, "onCardLinkSuccessCallback  is null, cannot send back data.");
 
 			} else
 				Log.w(LCAT, "invalid intent data");

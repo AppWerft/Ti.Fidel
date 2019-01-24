@@ -109,10 +109,12 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 			url = resolveUrl(null, imageName);
 			Log.d(LCAT,"bannerInmageUrl: " + url);
 			TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { url }, false);
+			Log.d(LCAT,"TiBaseFile: " + file.nativePath());
 			bitmap = TiUIHelper.createBitmap(file.getInputStream());
 		} catch (IOException e) {
 			Log.e(LCAT, "Fidel only supports local image files " + url);
 		}
+		Log.d(LCAT,"w x h: " + bitmap.getWidth()+ "x"+bitmap.getHeight());
 		return bitmap;
 	}
 

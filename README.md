@@ -39,8 +39,8 @@ If you want to edit the module it is a good idea to extract the jar from fidel.a
 ```javascript
 const Fidel = require('ti.fidel');
 Fidel.init({
-	programId : "XXX",
-	apiKey : "XXX",
+	programId : "e1d65be8-1011-42ad-ab6d-6………",
+	apiKey : "pk_test_660a132e-cc54-4734………",
 	companyName : "Example",
 	privacyURL : "https://example.com/privacy-policy",
 	deleteInstructions : "Delete your card using the app",

@@ -6,6 +6,12 @@ Axways Titanioum module for communication with Fidel system. Fidel uses opencv t
 
 Getting creds from [Fidel](http://fidel.uk/). The creds you can find under the right top account button. Here you find SDK keys. Here you need the public key. 
 
+
+## Handling/testing
+
+* You can test the opencv scanner only with real cards. Screenshots from google search doesn't work. This scanned cards you cannot link!
+* The form only accepts test nummers from fidel webpage (4444000000004* und 5555000000005*).  With this numbers you can test linking. If you use one number twice, then a warning on adb console appears. In next version of SDK this event will exposed to SDK.
+
 ##  Google services
 
 The library uses some libraries from googles playservice suite. For this dependency a requirement is inside timodule.xml. 

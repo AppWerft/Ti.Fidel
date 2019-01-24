@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+repositories {
+    google()
+    mavenCentral()
+  maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compile 'com.google.android.gms:play-services-maps:16.0.0'
+    compile 'com.google.android.gms:play-services-auth:16.0.1'	
+}
+
+task getDeps(type: Copy) {
+    from sourceSets.main.runtimeClasspath
+    into 'gsmlibs'
+}

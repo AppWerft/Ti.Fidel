@@ -11,4 +11,8 @@
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
         <manifest>
 	</android>
+
+<modules>
+    <module platform="android">ti.playservices</module>
+  </modules>
 </ti:module>

@@ -17,3 +17,6 @@ done
 zip -umr $MODULENAME modules/
 unzip -ou $MODULENAME -d '/Users/fuerst/Library/Application Support/Titanium/'
 cd ../../
+git add android/src/*
+git commit -m " "
+git push origin master

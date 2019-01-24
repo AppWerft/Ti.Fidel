@@ -38,10 +38,10 @@ Fidel.init({
 	privacyURL : "https://example.com/privacy-policy",
 	deleteInstructions : "Delete your card using the app",
 	country : Fidel.COUNTRY_UNITED_KINGDOM,
-	paymentDidComplete : onResult
+	onCardLinkSuccess : onResult
 });	
-Fidel.paymentDidComplete = onResult;
-Fidel.addEventListener("paymentDidComplete",onResult)
+Fidel.onCardLinkSuccess = onResult;
+Fidel.addEventListener("CardLinkSuccess",onResult)
 Fidel.present();
 function onResult(e) {
 	console.log(e);

@@ -62,7 +62,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 			Fidel.programId = opts.getString("programId");
 		}
 		if (opts.containsKeyAndNotNull("bannerImage")) {
-			Fidel.bannerImage = loadImageFromApplication(opts.getString("bannerImage"));
+			Fidel.bannerImage = loadImage(opts.getString("bannerImage"));
 		}
 		if (opts.containsKeyAndNotNull("companyName")) {
 			Fidel.companyName = opts.getString("companyName");
@@ -98,16 +98,16 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 		}
 	}
 
-	private Bitmap loadImageFromApplication(String imageName) {
+	private Bitmap loadImage(String imageName) {
 		Bitmap bitmap = null;
 		try {
 			TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { resolveUrl(null, imageName) }, false);
 			bitmap = TiUIHelper.createBitmap(file.getInputStream());
 		} catch (IOException e) {
 			Log.e(LCAT, "Fidel only supports local image files " + imageName);
+			return null;
 		}
-		Log.d(LCAT, "Dimensions of bannerImage: " + bitmap.getWidth() + "x" + bitmap.getHeight() + " rowBytes"
-				+ bitmap.getRowBytes() + " byteCounts" + bitmap.getByteCount());
+		Log.d(LCAT, "bannerImage: " + bitmap.getWidth() + "x" + bitmap.getHeight() + " byteCounts: " + bitmap.getByteCount());
 		return bitmap;
 	}
 

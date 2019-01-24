@@ -70,15 +70,15 @@ function onResult(e) {
 
 ### init(object)
 #### keys of object (parameters of init())
-* autoScan: Boolean
 * apiKey: String
+* programmId: String
 * autoScan: Boolean
 * companyName: String
-* country: 1 of countries above
+* country: one of countries above
 * deleteInstructions: String
 * metadata: Object
 * privacyUrl: String
-* programmId: String
+* bannerImage: String  
 
 
 ### present()

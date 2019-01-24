@@ -114,7 +114,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 		} catch (IOException e) {
 			Log.e(LCAT, "Fidel only supports local image files " + url);
 		}
-		Log.d(LCAT,"w x h: " + bitmap.getWidth()+ "x"+bitmap.getHeight());
+		Log.d(LCAT,"Dimensions of bannerImage: " + bitmap.getWidth()+ "x"+bitmap.getHeight());
 		return bitmap;
 	}
 
@@ -137,6 +137,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 				EnterCardDetailsActivity.class);
 		Fidel.FIDEL_LINK_CARD_REQUEST_CODE = support.getUniqueResultCode();
 		if (TiApplication.isUIThread()) {
+			Log.d(LCAT,"bannerImage (bytes): " + Fidel.bannerImage.getRowBytes());
 			support.launchActivityForResult(intent, Fidel.FIDEL_LINK_CARD_REQUEST_CODE, this);
 		} else {
 			TiMessenger.postOnMain(new Runnable() {

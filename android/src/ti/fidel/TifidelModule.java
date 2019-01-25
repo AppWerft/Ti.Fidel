@@ -54,6 +54,18 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 	}
 
 	@Kroll.method
+	public void setCheckbox(KrollDict opts) {
+		if (opts.containsKeyAndNotNull("companyName")) {
+			Fidel.companyName = opts.getString("companyName");
+		}
+		if (opts.containsKeyAndNotNull("privacyURL")) {
+			Fidel.privacyURL = opts.getString("privacyURL");
+		}
+		if (opts.containsKeyAndNotNull("deleteInstructions")) {
+			Fidel.deleteInstructions = opts.getString("deleteInstructions");
+		}
+	}
+	@Kroll.method
 	public void init(KrollDict opts) {
 		if (opts.containsKeyAndNotNull("apiKey")) {
 			Fidel.apiKey = opts.getString("apiKey");
@@ -64,15 +76,11 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 		if (opts.containsKeyAndNotNull("bannerImage")) {
 			Fidel.bannerImage = loadImage(opts.getString("bannerImage"));
 		}
-		if (opts.containsKeyAndNotNull("companyName")) {
-			Fidel.companyName = opts.getString("companyName");
-		}
+		
 		if (opts.containsKeyAndNotNull("country")) {
 			Fidel.country = Fidel.Country.valueOf(opts.getString("country"));
 		}
-		if (opts.containsKeyAndNotNull("privacyURL")) {
-			Fidel.privacyURL = opts.getString("privacyURL");
-		}
+		
 		if (opts.containsKeyAndNotNull("metaData")) {
 			Fidel.metaData = new JSONObject(opts.getKrollDict("metaData"));
 		}

@@ -41,12 +41,13 @@ const Fidel = require('ti.fidel');
 Fidel.init({
 	programId : "e1d65be8-1011-42ad-ab6d-6………",
 	apiKey : "pk_test_660a132e-cc54-4734………",
+	country : Fidel.COUNTRY_UNITED_KINGDOM
+});	
+Fidel.setCheckbox({
 	companyName : "Example",
 	privacyURL : "https://example.com/privacy-policy",
 	deleteInstructions : "Delete your card using the app",
-	country : Fidel.COUNTRY_UNITED_KINGDOM,
-	onCardLinkSuccess : onResult
-});	
+});
 Fidel.onCardLinkSuccess = onResult;
 Fidel.addEventListener("CardLinkSuccess",onResult)
 Fidel.present();
@@ -73,13 +74,15 @@ function onResult(e) {
 * apiKey: String
 * programmId: String
 * autoScan: Boolean
-* companyName: String
 * country: one of countries above
-* deleteInstructions: String
 * metadata: Object
-* privacyUrl: String
 * bannerImage: String  
 
+### setCheckbox(object)
+#### keys of object (parameters of setCheckbox())
+* deleteInstructions: String //(Maximum 60 characters);
+* privacyUrl: String  //(must be a valid URL)
+* companyName: String //(Maximum 60 characters);
 
 ### present()
 Generic method.
@@ -112,7 +115,29 @@ With these properties:
 * updated
 * describeContents
 
-### Example for result
+### Errors
+
+The error callback has the following codes:
+
+
+####    Fidel.ERROR\_USER_CANCELED 
+Sometimes it's useful to know if the user canceled the card linking process so please check for this error, if that's the case.
+
+###    Fidel.ERROR\_INVALID_URL 
+If you provide an invalid Fidel.privacyURL, you will receive this error. Please make sure your URL matches the Patterns.WEB_URL pattern.
+
+### Fidel.ERROR\_STRING\_OVER\_THE\_LIMIT 
+We send this error in case your Fidel.deleteInstructions or Fidel.companyName exceed 60 characters.
+ 
+### Fidel.ERROR\_MISSING\_MANDATORY\_INFO 
+Some of the mandatory information necessary to configure the SDK were not provided. The following are the mandatory info you need to provide:
+
+*        Fidel.apiKey
+*        Fidel.programId
+ 
+
+
+### Example for positive result
 
 ```
 {
@@ -137,3 +162,4 @@ With these properties:
   "updated": "2017-02-13T17:17:02.833Z"
 }
 ```
+

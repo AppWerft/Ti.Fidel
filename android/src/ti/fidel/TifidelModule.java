@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.fidel.sdk.Fidel;
 import com.fidel.sdk.LinkResult;
+import com.fidel.sdk.LinkResultError;
 import com.fidel.sdk.view.EnterCardDetailsActivity;
 import android.app.Activity;
 import android.content.Intent;
@@ -38,7 +39,15 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 	public static final String COUNTRY_SWEDEN = "SWEDEN";
 	@Kroll.constant
 	public static final String COUNTRY_IRELAND = "IRELAND";
-
+	@Kroll.constant
+	public static final String ERROR_ERROR_USER_CANCELED = "ERROR_USER_CANCELED";
+	@Kroll.constant
+	public static final String ERROR_INVALID_URL_ = "ERROR_INVALID_URL";
+	@Kroll.constant
+	public static final String STRING_OVER_THE_LIMIT_ = "STRING_OVER_THE_LIMIT";
+	@Kroll.constant
+	public static final String ERROR_MISSING_MANDATORY_INFO = "MISSING_MANDATORY_INFO";
+	
 	private static final String PROP_CARD_LINK_SUCCESS = "cardLinkSuccess";
 	private static final String PROP_ONCARD_LINK_SUCCESS = "onCardLinkSuccess";
 	private static final String PROP_ERROR = "Error";
@@ -65,6 +74,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 			Fidel.deleteInstructions = opts.getString("deleteInstructions");
 		}
 	}
+
 	@Kroll.method
 	public void init(KrollDict opts) {
 		if (opts.containsKeyAndNotNull("apiKey")) {
@@ -76,11 +86,11 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 		if (opts.containsKeyAndNotNull("bannerImage")) {
 			Fidel.bannerImage = loadImage(opts.getString("bannerImage"));
 		}
-		
+
 		if (opts.containsKeyAndNotNull("country")) {
 			Fidel.country = Fidel.Country.valueOf(opts.getString("country"));
 		}
-		
+
 		if (opts.containsKeyAndNotNull("metaData")) {
 			Fidel.metaData = new JSONObject(opts.getKrollDict("metaData"));
 		}
@@ -115,7 +125,8 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 			Log.e(LCAT, "Fidel only supports local image files " + imageName);
 			return null;
 		}
-		Log.d(LCAT, "bannerImage: " + bitmap.getWidth() + "x" + bitmap.getHeight() + " byteCounts: " + bitmap.getByteCount());
+		Log.d(LCAT, "bannerImage: " + bitmap.getWidth() + "x" + bitmap.getHeight() + " byteCounts: "
+				+ bitmap.getByteCount());
 		return bitmap;
 	}
 
@@ -132,7 +143,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 
 	@Kroll.method
 	public void present() {
-		that= this;
+		that = this;
 		final TiActivitySupport support = (TiActivitySupport) TiApplication.getAppCurrentActivity();
 		final Intent intent = new Intent(TiApplication.getInstance().getApplicationContext(),
 				EnterCardDetailsActivity.class);
@@ -197,7 +208,22 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 					onCardLinkSuccessCallback.callAsync(getKrollObject(), event);
 					Log.d(LCAT, "events sent back to JS layer");
 				} else
-					Log.w(LCAT, "onCardLinkSuccessCallback  is null, cannot send back data.");
+					Log.w(LCAT, "onCardLinkSuccess  is null, cannot send back data.");
+				LinkResult linkResult = data.getParcelableExtra(Fidel.FIDEL_LINK_CARD_RESULT_CARD);
+				LinkResultError error = linkResult.getError();
+				if (error != null) {
+					HashMap<String,Object> err = new HashMap();
+					if (onErrorCallback != null) {
+						err.put("message", error.message);
+						err.put("code", error.errorCode.name());
+						onErrorCallback.callAsync(getKrollObject(), err);
+						
+					} else
+						Log.w(LCAT, "onError  is null, cannot send back data.");					
+				    Log.e("Fidel Error", "error message = " + error.message);
+				}
+				
+				
 
 			} else
 				Log.w(LCAT, "invalid intent data");

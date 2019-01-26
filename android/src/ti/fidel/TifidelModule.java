@@ -10,6 +10,7 @@ import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiMessenger;
 import org.appcelerator.titanium.TiApplication;
+import org.appcelerator.titanium.TiProperties;
 import org.appcelerator.titanium.io.TiBaseFile;
 import org.appcelerator.titanium.io.TiFileFactory;
 import org.appcelerator.titanium.util.TiActivityResultHandler;
@@ -60,6 +61,9 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 
 	@Kroll.onAppCreate
 	public static void onAppCreate(TiApplication app) {
+		TiProperties appProperties = TiApplication.getInstance().getAppProperties();
+		Fidel.apiKey = appProperties.getString("FIDEL_APIKEY", "");
+		Fidel.programId = appProperties.getString("PROGRAMID", "");
 	}
 
 	@Kroll.method
@@ -136,7 +140,7 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 	}
 
 	@Kroll.method
-	public void startScanner() {
+	public void startScan() {
 		Fidel.autoScan = true;
 		present();
 	}
@@ -217,7 +221,6 @@ public class TifidelModule extends KrollModule implements TiActivityResultHandle
 						err.put("message", error.message);
 						err.put("code", error.errorCode.name());
 						onErrorCallback.callAsync(getKrollObject(), err);
-						
 					} else
 						Log.w(LCAT, "onError  is null, cannot send back data.");					
 				    Log.e("Fidel Error", "error message = " + error.message);

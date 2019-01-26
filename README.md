@@ -55,6 +55,25 @@ function onResult(e) {
 	console.log(e);
 }
 ```
+## Properties in tiapp.xml
+Optionally to setting of credential vars as property in `init()` you can put it into `tiapp.xml`
+
+```xml
+<property name="FIDEL_PROGRAMID" type="string">e1d65be8-1011-42a6………</property>
+<property name="FIDEL_APIKEY" type="string">pk_test_6607………</property>
+<property name="FIDEL_PROGRAMID" type="string">e1d65be8-1011-42a6………</property>
+<property name="FIDEL_COUNTRY" type="string">JAPAN</property>
+```
+In this case you can ommit the `init()` call.
+
+```javascript
+const Fidel = require('ti.fidel');
+Fidel.onCardLinkSuccess = function onResult(e) {
+    console.log(e);
+};
+Fidel.startScan();
+```
+
 
 ## Constants
 
@@ -115,21 +134,20 @@ With these properties:
 * updated
 * describeContents
 
-### Errors
+## Errors
 
-The error callback has the following codes:
-
+The error callback contains a textual message and one of the following codes:
 
 ####    Fidel.ERROR\_USER_CANCELED 
 Sometimes it's useful to know if the user canceled the card linking process so please check for this error, if that's the case.
 
-###    Fidel.ERROR\_INVALID_URL 
+####    Fidel.ERROR\_INVALID_URL 
 If you provide an invalid Fidel.privacyURL, you will receive this error. Please make sure your URL matches the Patterns.WEB_URL pattern.
 
-### Fidel.ERROR\_STRING\_OVER\_THE\_LIMIT 
+#### Fidel.ERROR\_STRING\_OVER\_THE\_LIMIT 
 We send this error in case your Fidel.deleteInstructions or Fidel.companyName exceed 60 characters.
  
-### Fidel.ERROR\_MISSING\_MANDATORY\_INFO 
+#### Fidel.ERROR\_MISSING\_MANDATORY\_INFO 
 Some of the mandatory information necessary to configure the SDK were not provided. The following are the mandatory info you need to provide:
 
 *        Fidel.apiKey

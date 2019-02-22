@@ -2,7 +2,7 @@
 
 Axways Titanioum module for communication with Fidel system. Fidel uses opencv to scan credit cards and send card data to portal.
 
-<img src="https://raw.githubusercontent.com/AppWerft/Ti.Fidel/master/documentation/screen.jpg" width="320"/>
+<img src="https://github.com/AppWerft/Ti.Fidel/blob/master/documentation/screen.jpg" width="320"/>
 
 ## Prerequisites
 
